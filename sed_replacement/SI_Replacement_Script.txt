@@ -1,0 +1,1636 @@
+# This is a sed (String Editor) script to make the output of UCXT more like
+# Usecode C so that it is more readable and potentially more convertable into
+# recompiled fixes. It could be converted for use in BG but is specific to SI.
+
+# SI
+
+###############################################################################
+# Conversation Conversion
+# First, remove the empty lines which indicate you click to read more
+/^	say();/d
+
+# Convert message("\ to say(
+# Double backslashes equal a single backslash
+s/message("\\/say(/g
+
+# Convert variable message lines, typically used to say the Avatar's names
+# This could be improved to change it to an escaped sequence and merge with
+# the other lines.
+s/message(/say(/g
+
+# Convert the end of the say line.
+# From \""); to ");
+s/\\"");/");/g
+
+# Convert UI_add_answer( to add(
+s/UI_add_answer(/add(/g
+
+# Convert converse (0) atend labelFunc041E_0838; to just converse (0)
+s/converse (0) atend.*/converse (0)/g
+
+# Convert case "kidnap" atend labelFunc0103_04F0: to case "kidnap" (remove):
+# \1 here is the first wildcard group .* which is remembered by \( and \)
+s/case \(.*\) atend.*/case \1 (remove):/g
+
+###############################################################################
+
+# Faces First with UI_ command here
+# Faces normally match up with the NPC number for 0-255 then don't after.
+# For completeness sake I did them all.
+# UI_show_npc_face0(0xFFE2 to UI_show_npc_face0(FACE_ROCCO
+s/UI_show_npc_face\(.*\)(0xFFFF/UI_show_npc_face\1(FACE_DUPRE/g
+s/UI_show_npc_face\(.*\)(0xFFFE/UI_show_npc_face\1(FACE_SHAMINO/g
+s/UI_show_npc_face\(.*\)(0xFFFD/UI_show_npc_face\1(FACE_IOLO/g
+s/UI_show_npc_face\(.*\)(0xFFFC/UI_show_npc_face\1(FACE_ANDRIO/g
+# Faces 5-12 unused
+s/UI_show_npc_face\(.*\)(0xFFF3/UI_show_npc_face\1(FACE_BUCIA/g
+s/UI_show_npc_face\(.*\)(0xFFF2/UI_show_npc_face\1(FACE_COLUMNA/g
+s/UI_show_npc_face\(.*\)(0xFFF1/UI_show_npc_face\1(FACE_DUCIO/g
+s/UI_show_npc_face\(.*\)(0xFFF0/UI_show_npc_face\1(FACE_EDRIN/g
+s/UI_show_npc_face\(.*\)(0xFFEF/UI_show_npc_face\1(FACE_FEDABIBLIO/g
+s/UI_show_npc_face\(.*\)(0xFFEE/UI_show_npc_face\1(FACE_FILBERCIO/g
+s/UI_show_npc_face\(.*\)(0xFFED/UI_show_npc_face\1(FACE_FRELI/g
+s/UI_show_npc_face\(.*\)(0xFFEC/UI_show_npc_face\1(FACE_FRIGIDAZZI/g
+# Face 21 unused
+s/UI_show_npc_face\(.*\)(0xFFEA/UI_show_npc_face\1(FACE_GUSTACIO/g
+s/UI_show_npc_face\(.*\)(0xFFE9/UI_show_npc_face\1(FACE_JULIA/g
+s/UI_show_npc_face\(.*\)(0xFFE8/UI_show_npc_face\1(FACE_MELINO/g
+# Face 25 unused
+s/UI_show_npc_face\(.*\)(0xFFE6/UI_show_npc_face\1(FACE_MORTEGRO/g
+s/UI_show_npc_face\(.*\)(0xFFE5/UI_show_npc_face\1(FACE_MOSH/g
+s/UI_show_npc_face\(.*\)(0xFFE4/UI_show_npc_face\1(FACE_PETRA/g
+s/UI_show_npc_face\(.*\)(0xFFE3/UI_show_npc_face\1(FACE_POTHOS/g
+s/UI_show_npc_face\(.*\)(0xFFE2/UI_show_npc_face\1(FACE_ROCCO/g
+s/UI_show_npc_face\(.*\)(0xFFE1/UI_show_npc_face\1(FACE_ROTOLUNCIA/g
+s/UI_show_npc_face\(.*\)(0xFFE0/UI_show_npc_face\1(FACE_TOPO/g
+s/UI_show_npc_face\(.*\)(0xFFDF/UI_show_npc_face\1(FACE_TORRISSIO/g
+s/UI_show_npc_face\(.*\)(0xFFDE/UI_show_npc_face\1(FACE_BOYDON/g
+s/UI_show_npc_face\(.*\)(0xFFDD/UI_show_npc_face\1(FACE_ERSTAM/g
+s/UI_show_npc_face\(.*\)(0xFFDC/UI_show_npc_face\1(FACE_VASEL/g
+# Face 37 unused
+s/UI_show_npc_face\(.*\)(0xFFDA/UI_show_npc_face\1(FACE_ARGUS/g
+s/UI_show_npc_face\(.*\)(0xFFD9/UI_show_npc_face\1(FACE_BYRIN/g
+s/UI_show_npc_face\(.*\)(0xFFD8/UI_show_npc_face\1(FACE_HAWK/g
+s/UI_show_npc_face\(.*\)(0xFFD7/UI_show_npc_face\1(FACE_DEVRA/g
+s/UI_show_npc_face\(.*\)(0xFFD6/UI_show_npc_face\1(FACE_FLINDO/g
+s/UI_show_npc_face\(.*\)(0xFFD5/UI_show_npc_face\1(FACE_KANE/g
+s/UI_show_npc_face\(.*\)(0xFFD4/UI_show_npc_face\1(FACE_SELINA/g
+s/UI_show_npc_face\(.*\)(0xFFD3/UI_show_npc_face\1(FACE_WILFRED/g
+s/UI_show_npc_face\(.*\)(0xFFD2/UI_show_npc_face\1(FACE_ALYSSAND/g
+s/UI_show_npc_face\(.*\)(0xFFD1/UI_show_npc_face\1(FACE_DELIN/g
+s/UI_show_npc_face\(.*\)(0xFFD0/UI_show_npc_face\1(FACE_DELPHYNIA/g
+s/UI_show_npc_face\(.*\)(0xFFCF/UI_show_npc_face\1(FACE_GARTH/g
+s/UI_show_npc_face\(.*\)(0xFFCE/UI_show_npc_face\1(FACE_JOTH/g
+s/UI_show_npc_face\(.*\)(0xFFCD/UI_show_npc_face\1(FACE_VOLDIN/g
+s/UI_show_npc_face\(.*\)(0xFFCC/UI_show_npc_face\1(FACE_JENDON/g
+s/UI_show_npc_face\(.*\)(0xFFCB/UI_show_npc_face\1(FACE_JORVIN/g
+s/UI_show_npc_face\(.*\)(0xFFCA/UI_show_npc_face\1(FACE_KYLISTA/g
+s/UI_show_npc_face\(.*\)(0xFFC9/UI_show_npc_face\1(FACE_YELINDA/g
+s/UI_show_npc_face\(.*\)(0xFFC8/UI_show_npc_face\1(FACE_LEON/g
+s/UI_show_npc_face\(.*\)(0xFFC7/UI_show_npc_face\1(FACE_KALEN/g
+s/UI_show_npc_face\(.*\)(0xFFC6/UI_show_npc_face\1(FACE_OLON/g
+s/UI_show_npc_face\(.*\)(0xFFC5/UI_show_npc_face\1(FACE_RUGGS/g
+s/UI_show_npc_face\(.*\)(0xFFC4/UI_show_npc_face\1(FACE_SCOTS/g
+s/UI_show_npc_face\(.*\)(0xFFC3/UI_show_npc_face\1(FACE_ZULITH/g
+s/UI_show_npc_face\(.*\)(0xFFC2/UI_show_npc_face\1(FACE_ANDRAL/g
+s/UI_show_npc_face\(.*\)(0xFFC1/UI_show_npc_face\1(FACE_CALADIN/g
+s/UI_show_npc_face\(.*\)(0xFFC0/UI_show_npc_face\1(FACE_CANTRA/g
+s/UI_show_npc_face\(.*\)(0xFFBF/UI_show_npc_face\1(FACE_CELLIA/g
+s/UI_show_npc_face\(.*\)(0xFFBE/UI_show_npc_face\1(FACE_GOBLIN_SIMON/g
+s/UI_show_npc_face\(.*\)(0xFFBD/UI_show_npc_face\1(FACE_HARNNA/g
+s/UI_show_npc_face\(.*\)(0xFFBC/UI_show_npc_face\1(FACE_KRAYG/g
+s/UI_show_npc_face\(.*\)(0xFFBB/UI_show_npc_face\1(FACE_MARSTEN/g
+s/UI_show_npc_face\(.*\)(0xFFBA/UI_show_npc_face\1(FACE_LUCILLA/g
+s/UI_show_npc_face\(.*\)(0xFFB9/UI_show_npc_face\1(FACE_LUTHER/g
+s/UI_show_npc_face\(.*\)(0xFFB8/UI_show_npc_face\1(FACE_LYDIA/g
+s/UI_show_npc_face\(.*\)(0xFFB7/UI_show_npc_face\1(FACE_RENFRY/g
+s/UI_show_npc_face\(.*\)(0xFFB6/UI_show_npc_face\1(FACE_SHAZZANA/g
+s/UI_show_npc_face\(.*\)(0xFFB5/UI_show_npc_face\1(FACE_SHMED/g
+s/UI_show_npc_face\(.*\)(0xFFB4/UI_show_npc_face\1(FACE_SIMON/g
+s/UI_show_npc_face\(.*\)(0xFFB3/UI_show_npc_face\1(FACE_SPEKTOR/g
+s/UI_show_npc_face\(.*\)(0xFFB2/UI_show_npc_face\1(FACE_STANDARR/g
+s/UI_show_npc_face\(.*\)(0xFFB1/UI_show_npc_face\1(FACE_TEMPLAR/g
+s/UI_show_npc_face\(.*\)(0xFFB0/UI_show_npc_face\1(FACE_FLICKEN/g
+s/UI_show_npc_face\(.*\)(0xFFAF/UI_show_npc_face\1(FACE_ENSORCIO/g
+# Faces 82-93 unused
+s/UI_show_npc_face\(.*\)(0xFFA2/UI_show_npc_face\1(FACE_MURDER1/g
+s/UI_show_npc_face\(.*\)(0xFFA1/UI_show_npc_face\1(FACE_MURDER2/g
+s/UI_show_npc_face\(.*\)(0xFFA0/UI_show_npc_face\1(FACE_MURDER3/g
+s/UI_show_npc_face\(.*\)(0xFF9F/UI_show_npc_face\1(FACE_MURDER4/g
+s/UI_show_npc_face\(.*\)(0xFF9E/UI_show_npc_face\1(FACE_MURDER5/g
+s/UI_show_npc_face\(.*\)(0xFF9D/UI_show_npc_face\1(FACE_MURDER6/g
+# Faces 100-126 unused
+s/UI_show_npc_face\(.*\)(0xFF81/UI_show_npc_face\1(FACE_BRUNT/g
+s/UI_show_npc_face\(.*\)(0xFF80/UI_show_npc_face\1(FACE_DEADEYE/g
+# Faces 129-142 unused
+s/UI_show_npc_face\(.*\)(0xFF71/UI_show_npc_face\1(FACE_BAIYANDA/g
+s/UI_show_npc_face\(.*\)(0xFF70/UI_show_npc_face\1(FACE_BWUNDIAI/g
+s/UI_show_npc_face\(.*\)(0xFF6F/UI_show_npc_face\1(FACE_MWAERNO/g
+s/UI_show_npc_face\(.*\)(0xFF6E/UI_show_npc_face\1(FACE_MYAURI/g
+s/UI_show_npc_face\(.*\)(0xFF6D/UI_show_npc_face\1(FACE_NEYOBI/g
+s/UI_show_npc_face\(.*\)(0xFF6C/UI_show_npc_face\1(FACE_YENANI/g
+s/UI_show_npc_face\(.*\)(0xFF6B/UI_show_npc_face\1(FACE_GWENNO/g
+s/UI_show_npc_face\(.*\)(0xFF6A/UI_show_npc_face\1(FACE_BRENDANN/g
+# Face 151 unused
+s/UI_show_npc_face\(.*\)(0xFF68/UI_show_npc_face\1(FACE_SETHYS/g
+s/UI_show_npc_face\(.*\)(0xFF67/UI_show_npc_face\1(FACE_GILWOYAI/g
+s/UI_show_npc_face\(.*\)(0xFF66/UI_show_npc_face\1(FACE_KAPYUNDI/g
+s/UI_show_npc_face\(.*\)(0xFF65/UI_show_npc_face\1(FACE_BERYL/g
+s/UI_show_npc_face\(.*\)(0xFF64/UI_show_npc_face\1(FACE_DRAYGAN/g
+# Faces 157-158 unused
+s/UI_show_npc_face\(.*\)(0xFF61/UI_show_npc_face\1(FACE_MORGHRIM/g
+# Faces 160-167 unused
+s/UI_show_npc_face\(.*\)(0xFF58/UI_show_npc_face\1(FACE_STEFANO/g
+# Face 169 unused
+s/UI_show_npc_face\(.*\)(0xFF56/UI_show_npc_face\1(FACE_ZHELKAS/g
+# Faces 171-177 unused
+s/UI_show_npc_face\(.*\)(0xFF4E/UI_show_npc_face\1(FACE_CLONE_IOLO/g
+s/UI_show_npc_face\(.*\)(0xFF4D/UI_show_npc_face\1(FACE_CLONE_SHAMINO/g
+s/UI_show_npc_face\(.*\)(0xFF4C/UI_show_npc_face\1(FACE_CLONE_DUPRE/g
+s/UI_show_npc_face\(.*\)(0xFF4B/UI_show_npc_face\1(FACE_RABINDRINATH/g
+s/UI_show_npc_face\(.*\)(0xFF4A/UI_show_npc_face\1(FACE_SIRANUSH/g
+# Face 183 unused
+s/UI_show_npc_face\(.*\)(0xFF48/UI_show_npc_face\1(FACE_MURDER7/g
+# Faces 185-206 unused
+s/UI_show_npc_face\(.*\)(0xFF31/UI_show_npc_face\1(FACE_KARNAX/g
+# Face 208 unused
+s/UI_show_npc_face\(.*\)(0xFF2F/UI_show_npc_face\1(FACE_MIGGIM/g
+# Face 210 unused
+s/UI_show_npc_face\(.*\)(0xFF2D/UI_show_npc_face\1(FACE_THOXA/g
+s/UI_show_npc_face\(.*\)(0xFF2C/UI_show_npc_face\1(FACE_BRACCUS/g
+s/UI_show_npc_face\(.*\)(0xFF2B/UI_show_npc_face\1(FACE_DRAXTA/g
+# Face 214 unused
+s/UI_show_npc_face\(.*\)(0xFF29/UI_show_npc_face\1(FACE_XENKA/g
+# Faces 216-255 unused
+s/UI_show_npc_face\(.*\)(0xFF00/UI_show_npc_face\1(FACE_ARCADION/g
+s/UI_show_npc_face\(.*\)(0xFEFF/UI_show_npc_face\1(FACE_BLACK_SWORD/g
+s/UI_show_npc_face\(.*\)(0xFEFE/UI_show_npc_face\1(FACE_SHRIASH/g
+s/UI_show_npc_face\(.*\)(0xFEFD/UI_show_npc_face\1(FACE_WISP1/g
+s/UI_show_npc_face\(.*\)(0xFEFC/UI_show_npc_face\1(FACE_WISP2/g
+s/UI_show_npc_face\(.*\)(0xFEFB/UI_show_npc_face\1(FACE_ORACLE/g
+s/UI_show_npc_face\(.*\)(0xFEFA/UI_show_npc_face\1(FACE_CATMAN/g
+# Face 263 unused
+s/UI_show_npc_face\(.*\)(0xFEF8/UI_show_npc_face\1(FACE_VASCULIO/g
+# Face 265 unused
+s/UI_show_npc_face\(.*\)(0xFEF6/UI_show_npc_face\1(FACE_YELINDA_SKINLESS/g
+s/UI_show_npc_face\(.*\)(0xFEF5/UI_show_npc_face\1(FACE_SSITHNOS/g
+s/UI_show_npc_face\(.*\)(0xFEF4/UI_show_npc_face\1(FACE_ANTI_SHAMINO1/g
+s/UI_show_npc_face\(.*\)(0xFEF3/UI_show_npc_face\1(FACE_FAWN_GUARD/g
+s/UI_show_npc_face\(.*\)(0xFEF2/UI_show_npc_face\1(FACE_GOBLIN_KING/g
+s/UI_show_npc_face\(.*\)(0xFEF1/UI_show_npc_face\1(FACE_PIKEMAN_BEAR/g
+s/UI_show_npc_face\(.*\)(0xFEF0/UI_show_npc_face\1(FACE_SKYRISE/g
+s/UI_show_npc_face\(.*\)(0xFEEF/UI_show_npc_face\1(FACE_PALOS/g
+s/UI_show_npc_face\(.*\)(0xFEEE/UI_show_npc_face\1(FACE_RANGER/g
+s/UI_show_npc_face\(.*\)(0xFEED/UI_show_npc_face\1(FACE_PIKEMAN_WOLF/g
+s/UI_show_npc_face\(.*\)(0xFEEC/UI_show_npc_face\1(FACE_LORD_BRITISH/g
+s/UI_show_npc_face\(.*\)(0xFEEB/UI_show_npc_face\1(FACE_GHOST/g
+s/UI_show_npc_face\(.*\)(0xFEEA/UI_show_npc_face\1(FACE_PIKEMAN_LEOPARD/g
+s/UI_show_npc_face\(.*\)(0xFEE9/UI_show_npc_face\1(FACE_HOUND_OF_DOSKAR/g
+s/UI_show_npc_face\(.*\)(0xFEE8/UI_show_npc_face\1(FACE_HAZARD/g
+s/UI_show_npc_face\(.*\)(0xFEE7/UI_show_npc_face\1(FACE_ERNESTO/g
+s/UI_show_npc_face\(.*\)(0xFEE6/UI_show_npc_face\1(FACE_ANTI_DUPRE1/g
+# Face 283 unused
+s/UI_show_npc_face\(.*\)(0xFEE4/UI_show_npc_face\1(FACE_CHAOS_HIEROPHANT/g
+# Face 285 unused
+s/UI_show_npc_face\(.*\)(0xFEE2/UI_show_npc_face\1(FACE_BEATRIX/g
+s/UI_show_npc_face\(.*\)(0xFEE1/UI_show_npc_face\1(FACE_BATLIN/g
+s/UI_show_npc_face\(.*\)(0xFEE0/UI_show_npc_face\1(FACE_ANTI_IOLO1/g
+s/UI_show_npc_face\(.*\)(0xFEDF/UI_show_npc_face\1(FACE_FITCH/g
+s/UI_show_npc_face\(.*\)(0xFEDE/UI_show_npc_face\1(FACE_ANTI_SHAMINO/g
+s/UI_show_npc_face\(.*\)(0xFEDD/UI_show_npc_face\1(FACE_ANTI_DUPRE/g
+s/UI_show_npc_face\(.*\)(0xFEDC/UI_show_npc_face\1(FACE_ANTI_IOLO/g
+s/UI_show_npc_face\(.*\)(0xFEDB/UI_show_npc_face\1(FACE_CHAOS_SERPENT/g
+s/UI_show_npc_face\(.*\)(0xFEDA/UI_show_npc_face\1(FACE_ORDER_SERPENT/g
+s/UI_show_npc_face\(.*\)(0xFED9/UI_show_npc_face\1(FACE_GREAT_EARTH_SERPENT/g
+s/UI_show_npc_face\(.*\)(0xFED8/UI_show_npc_face\1(FACE_GUARDIAN/g
+s/UI_show_npc_face\(.*\)(0xFED7/UI_show_npc_face\1(FACE_WILDMAN/g
+s/UI_show_npc_face\(.*\)(0xFED6/UI_show_npc_face\1(FACE_AUTOMATON/g
+s/UI_show_npc_face\(.*\)(0xFED5/UI_show_npc_face\1(FACE_AVATAR_TATTOO/g
+s/UI_show_npc_face\(.*\)(0xFED4/UI_show_npc_face\1(FACE_GES_TRANSLUCENT/g
+s/UI_show_npc_face\(.*\)(0xFED3/UI_show_npc_face\1(FACE_BOYDON_HEAD/g
+s/UI_show_npc_face\(.*\)(0xFED2/UI_show_npc_face\1(FACE_ROTOLUNCIA_SCROLL/g
+# Faces 303-304 unused
+s/UI_show_npc_face\(.*\)(0xFECF/UI_show_npc_face\1(FACE_SHAL/g
+s/UI_show_npc_face\(.*\)(0xFECE/UI_show_npc_face\1(FACE_ISSTANAR/g
+s/UI_show_npc_face\(.*\)(0xFECD/UI_show_npc_face\1(FACE_ELISSA/g
+s/UI_show_npc_face\(.*\)(0xFECC/UI_show_npc_face\1(FACE_SUROK/g
+s/UI_show_npc_face\(.*\)(0xFECB/UI_show_npc_face\1(FACE_TSANDAR/g
+s/UI_show_npc_face\(.*\)(0xFECA/UI_show_npc_face\1(FACE_DRAXINAR/g
+s/UI_show_npc_face\(.*\)(0xFEC9/UI_show_npc_face\1(FACE_YUREL/g
+s/UI_show_npc_face\(.*\)(0xFEC8/UI_show_npc_face\1(FACE_RIEYA/g
+s/UI_show_npc_face\(.*\)(0xFEC7/UI_show_npc_face\1(FACE_SOLARIA/g
+s/UI_show_npc_face\(.*\)(0xFEC6/UI_show_npc_face\1(FACE_DRUSILLA/g
+# That's all for Faces. Phew.
+
+###############################################################################
+# Global Flags
+# Convert from gflags[0x0000] to gflags[SIFIXES_NAME]
+# s/gflags\[0x00\]/gflags\[\]/g
+# Backslashes here escape the brackets.
+# Probably should have done this in a spreadsheet first,
+# since many of these aren't in SIfixes yet...
+
+s/gflags\[0x0000\]/gflags\[SHAMINOS_KEEP_BARRIERS_GONE\]/g
+
+# 2 not-in-usecode
+s/gflags\[0x0003\]/gflags\[STARTING_SPEECH\]/g
+s/gflags\[0x0004\]/gflags\[BANES_RELEASED\]/g
+
+s/gflags\[0x0006\]/gflags\[EQUIPMENT_EXCHANGED\]/g
+s/gflags\[0x0007\]/gflags\[TEMP_FLAG_1\]/g
+s/gflags\[0x0008\]/gflags\[TEMP_FLAG_2\]/g
+s/gflags\[0x0009\]/gflags\[TEMP_FLAG_3\]/g
+s/gflags\[0x000A\]/gflags\[TEMP_FLAG_4\]/g
+
+s/gflags\[0x000C\]/gflags\[ASKED_ANDRAL_ABOUT_INN\]/g
+
+# Companions_have_equipment
+s/gflags\[0x000F\]/gflags\[STEFANO_HAS_BELONGINGS\]/g
+s/gflags\[0x0010\]/gflags\[GWENNO_HAS_BELONGINGS\]/g
+s/gflags\[0x0011\]/gflags\[SELINA_HAS_BELONGINGS\]/g
+s/gflags\[0x0013\]/gflags\[BOYDON_HAS_BELONGINGS\]/g
+s/gflags\[0x0015\]/gflags\[PETRA_HAS_BELONGINGS\]/g
+s/gflags\[0x0016\]/gflags\[WILFRED_HAS_BELONGINGS\]/g
+s/gflags\[0x0017\]/gflags\[DUPRE_HAS_BELONGINGS\]/g
+s/gflags\[0x0018\]/gflags\[SHAMINO_HAS_BELONGINGS\]/g
+s/gflags\[0x0019\]/gflags\[IOLO_HAS_BELONGINGS\]/g
+
+# Copy_protection_duplicate_prevention
+s/gflags\[0x001A\]/gflags\[ASKED_9TH_CIRCLE\]/g
+s/gflags\[0x001B\]/gflags\[ASKED_ARMOR_MATERIALS\]/g
+s/gflags\[0x001C\]/gflags\[ASKED_BEASTS\]/g
+s/gflags\[0x001D\]/gflags\[ASKED_REAGENTS\]/g
+s/gflags\[0x001E\]/gflags\[ASKED_MASS_DEATH\]/g
+s/gflags\[0x001F\]/gflags\[ASKED_GINSING\]/g
+s/gflags\[0x0020\]/gflags\[ASKED_CREATE_AUTOMATA\]/g
+s/gflags\[0x0021\]/gflags\[ASKED_REASONS_FOR_WRITING\]/g
+s/gflags\[0x0022\]/gflags\[ASKED_OPHIDIAN_WRITING\]/g
+s/gflags\[0x0023\]/gflags\[ASKED_OTHER_LANDMARKS\]/g
+s/gflags\[0x0024\]/gflags\[ASKED_CITIES_ESTABLISHED\]/g
+s/gflags\[0x0025\]/gflags\[ASKED_PRINCIPLES_OF_BALANCE\]/g
+s/gflags\[0x0026\]/gflags\[ASKED_CLANS_OF_MONITOR\]/g
+s/gflags\[0x0027\]/gflags\[ASKED_WEAPON_TYPES\]/g
+s/gflags\[0x0028\]/gflags\[ASKED_WORDS_OF_POWER\]/g
+
+s/gflags\[0x002C\]/gflags\[HAVE_HELM_OF_MONITOR\]/g
+s/gflags\[0x002D\]/gflags\[TOLD_MARSTEN_SERVES_LORD_BRITISH\]/g
+s/gflags\[0x002F\]/gflags\[LORD_MARSTEN_GAVE_PERMISSION\]/g
+
+s/gflags\[0x0032\]/gflags\[FIRST_TALK_WITH_MARSTEN\]/g
+s/gflags\[0x0033\]/gflags\[CAN_ASK_ABOUT_TEST\]/g
+s/gflags\[0x0035\]/gflags\[CAN_ASK_LYDIA_ABOUT_POISON\]/g
+s/gflags\[0x0036\]/gflags\[CAN_ACCUSE_MARSTEN\]/g
+s/gflags\[0x0038\]/gflags\[PROVED_MARSTEN_IS_TRAITOR\]/g
+
+s/gflags\[0x003B\]/gflags\[KNOW_TEST_SECRETS\]/g
+s/gflags\[0x003C\]/gflags\[KNOWS_MARSTEN_GIVES_PERMISSION\]/g
+s/gflags\[0x003E\]/gflags\[GOT_TATTOOED\]/g
+s/gflags\[0x003D\]/gflags\[BRENDANN_PROPOSAL\]/g
+s/gflags\[0x003F\]/gflags\[BRENDANN_TATTOO_COMPLIMENT\]/g
+
+s/gflags\[0x0041\]/gflags\[DEFEATED_LUTHER\]/g
+s/gflags\[0x0042\]/gflags\[ASKED_LUTHER_ABOUT_BULLY\]/g
+s/gflags\[0x0043\]/gflags\[LUTHER_CHALLENGED\]/g
+s/gflags\[0x0044\]/gflags\[GOBLIN_SIMON_DEAD\]/g
+s/gflags\[0x0045\]/gflags\[PICKED_UP_BROWN_BOTTLE\]/g
+
+s/gflags\[0x0047\]/gflags\[CURED_CANTRA\]/g
+s/gflags\[0x0048\]/gflags\[AVATAR_IS_KNIGHT\]/g
+
+s/gflags\[0x004A\]/gflags\[SLAIN_WOLF\]/g
+
+s/gflags\[0x004C\]/gflags\[RETURNED_URN_TO_CALADIN\]/g
+s/gflags\[0x004E\]/gflags\[KNOWS_KRAYG_WALKS_ON_WOODS\]/g
+
+s/gflags\[0x0053\]/gflags\[COURTED_LUCILLA\]/g
+s/gflags\[0x0054\]/gflags\[ACCEPTEC_LUCILLA_PROPOSAL\]/g
+s/gflags\[0x0055\]/gflags\[KNOWS_OF_LUCILLA_AND_SPEKTOR\]/g
+
+s/gflags\[0x0058\]/gflags\[ASKED_ANDRAL_ABOUT_ROBBERY\]/g
+s/gflags\[0x005A\]/gflags\[CURED_LYDIA_POISON\]/g
+s/gflags\[0x005B\]/gflags\[WILL_FIND_CANTRA\]/g
+
+s/gflags\[0x0060\]/gflags\[AVATAR_GOT_SHORT_STICK]/g
+s/gflags\[0x0061\]/gflags\[DUPRE_IS_TOAST]/g
+
+s/gflags\[0x0076\]/gflags\[KNOWS_ABOUT_VARO_LEAVES\]/g
+s/gflags\[0x0078\]/gflags\[IOLO_MADE_EQUIPMENT_LIST\]/g
+s/gflags\[0x0079\]/gflags\[KNOWS_CANTRA_IS_MISSING\]/g
+s/gflags\[0x007D\]/gflags\[GAVE_WOLF_TO_CELIA\]/g
+s/gflags\[0x007E\]/gflags\[HAVE_WOLF_CLOAK\]/g
+s/gflags\[0x007F\]/gflags\[KNOWS_ABOUT_MONITOR_CLANS\]/g
+
+s/gflags\[0x0080\]/gflags\[ASKED_SHMED_ABOUT_TEST\]/g
+
+s/gflags\[0x0082\]/gflags\[BEGAN_KNIGHTS_TEST\]/g
+s/gflags\[0x0083\]/gflags\[MONITOR_TRAINING\]/g
+s/gflags\[0x0084\]/gflags\[TRAINING_FLAG_SET\]/g
+s/gflags\[0x0085\]/gflags\[LEAVING_LIST_FIELD\]/g
+
+s/gflags\[0x008A\]/gflags\[GAINED_GWANI_CLOAK\]/g
+
+s/gflags\[0x008D\]/gflags\[ASKED_STANDARR_ABOUT_BRUNT\]/g
+s/gflags\[0x008E\]/gflags\[KNOWS_BATLIN_WAS_IN_MONITOR\]/g
+s/gflags\[0x008F\]/gflags\[ASK_LUCILLA_ABOUT_ANDRAL\]/g
+
+s/gflags\[0x0090\]/gflags\[REFUSED_TO_RETURN_URN\]/g
+s/gflags\[0x0091\]/gflags\[GAVE_WOLF_TO_LUCILLA\]/g
+s/gflags\[0x0092\]/gflags\[PROVED_SPEKTOR_IS_TRAITOR\]/g
+
+s/gflags\[0x0093\]/gflags\[KNOW_MARSTEN_IS_TRAITOR\]/g
+s/gflags\[0x0094\]/gflags\[KNOW_SPEKTOR_IS_TRAITOR\]/g
+
+s/gflags\[0x0096\]/gflags\[TOLD_CANTRA_IS_ALIVE\]/g
+s/gflags\[0x0098\]/gflags\[POISONED_BY_LYDIA\]/g
+s/gflags\[0x0099\]/gflags\[ASK_BRENDANN_ABOUT_STOCKINGS\]/g
+s/gflags\[0x009A\]/gflags\[ASK_CALADIN_ABOUT_URN\]/g
+s/gflags\[0x009B\]/gflags\[ASK_KRAYG_ABOUT_PUMICE\]/g
+s/gflags\[0x009C\]/gflags\[ASK_LUCILLA_ABOUT_LOSTRING\]/g
+s/gflags\[0x009D\]/gflags\[ASK_CELLIA_ABOUT_FURCAP\]/g
+s/gflags\[0x009E\]/gflags\[ASK_KRAYG_ABOUT_SLIPPERS\]/g
+s/gflags\[0x009F\]/gflags\[ASK_STANDARR_ABOUT_BREASTPLATE\]/g
+s/gflags\[0x00A0\]/gflags\[ASK_TEMPLAR_ABOUT_HAIRBRUSH\]/g
+s/gflags\[0x00A1\]/gflags\[ASK_SIMON_ABOUT_STRANGEWINE\]/g
+s/gflags\[0x00A2\]/gflags\[ASK_SPEKTOR_ABOUT_STRANGECOINS\]/g
+s/gflags\[0x00A3\]/gflags\[ASK_RENFRY_ABOUT_HAND\]/g
+s/gflags\[0x00A4\]/gflags\[ASKED_TEMPLAR_ABOUT_GOBLINS\]/g
+s/gflags\[0x00A5\]/gflags\[RENOUNCED_BRITISH\]/g
+s/gflags\[0x00A6\]/gflags\[ASKED_KRAYG_ABOUT_RUINS\]/g
+s/gflags\[0x00A7\]/gflags\[ASKED_SPEKTOR_ABOUT_GWENNO\]/g
+s/gflags\[0x00A8\]/gflags\[ASKED_SHAZZANA_ABOUT_SAILOR\]/g
+s/gflags\[0x00A9\]/gflags\[KNOWS_IOLO_IMPRISONED\]/g
+s/gflags\[0x00AA\]/gflags\[TALKED_TO_IMPRISONED_IOLO\]/g
+
+s/gflags\[0x00AC\]/gflags\[HAS_CLUE_MONITOR_SHIELD\]/g
+s/gflags\[0x00AE\]/gflags\[LUCILLA_SAYS_LUTHER_REPULSIVE\]/g
+s/gflags\[0x00AF\]/gflags\[CALLED_LUTHER_BRAGGART\]/g
+
+
+s/gflags\[0x00B0\]/gflags\[CALLED_LUTHER_REPULSIVE\]/g
+s/gflags\[0x00B1\]/gflags\[CALLED_LUTHER_BULLY\]/g
+# Changed this one's name:
+s/gflags\[0x00B2\]/gflags\[GOT_DUPRES_SHIELD_BACK\]/g
+s/gflags\[0x00B3\]/gflags\[TELL_SPEKTOR_ABOUT_TRAITOR\]/g
+s/gflags\[0x00B4\]/gflags\[SPEKTOR_ADMITS_HIS_CRIMES\]/g
+s/gflags\[0x00B5\]/gflags\[MARSTEN_WONT_RELEASE_IOLO\]/g
+s/gflags\[0x00B6\]/gflags\[KNOW_OF_MONITOR_THIEF\]/g
+s/gflags\[0x00B7\]/gflags\[DUPRE_MADE_EQUIPMENT_LIST\]/g
+s/gflags\[0x00B8\]/gflags\[TRIED_SIMONS_ALE\]/g
+s/gflags\[0x00B9\]/gflags\[PAID_IOLO_FINE\]/g
+s/gflags\[0x00BA\]/gflags\[ASKED_STANDARR_ABOUT_QUESTS\]/g
+
+s/gflags\[0x00BC\]/gflags\[ASKED_CANTRA_ABOUT_TEST\]/g
+
+s/gflags\[0x00BF\]/gflags\[MONITOR_BANQUET_STARTED\]/g
+
+
+
+
+# Fixed spelling error in name:
+s/gflags\[0x00BE\]/gflags\[CREMATED_PIKEMAN\]/g
+
+s/gflags\[0x00C0\]/gflags\[KNOWS_GOBLIN_MONOLITH\]/g
+s/gflags\[0x00C1\]/gflags\[HAVE_SPEKTOR_KEY\]/g
+
+s/gflags\[0x00C4\]/gflags\[BRENDANN_GAVE_JAIL_KEY\]/g
+s/gflags\[0x00C6\]/gflags\[FOUND_CANTRAS_FATHER\]/g
+s/gflags\[0x00C7\]/gflags\[TOLD_HARNNA_FOUND_SCROLL\]/g
+s/gflags\[0x00C8\]/gflags\[FOUND_BROWN_BOTTLE\]/g
+
+s/gflags\[0x00CA\]/gflags\[LYDIA_CONFESSES\]/g
+
+s/gflags\[0x00CC\]/gflags\[POMDIRGUN_IS_DEAD\]/g
+s/gflags\[0x00CD\]/gflags\[MARSTEN_GAVE_JAIL_KEY\]/g
+
+
+s/gflags\[0x00D3\]/gflags\[WANTONESS_BANE_DEAD\]/g
+s/gflags\[0x00D4\]/gflags\[ANARCHY_BANE_DEAD\]/g
+s/gflags\[0x00D5\]/gflags\[INSANITY_BANE_DEAD\]/g
+
+
+s/gflags\[0x00D7\]/gflags\[HAVE_TALKING_SCROLL\]/g
+s/gflags\[0x00D9\]/gflags\[POTHOS_RETURNED\]/g
+s/gflags\[0x00DB\]/gflags\[HAVE_NEW_SPELLBOOK\]/g
+s/gflags\[0x00DC\]/gflags\[KNOWS_POTHOS_SECRET\]/g
+s/gflags\[0x00DD\]/gflags\[HELPED_POTHOS\]/g
+s/gflags\[0x00DE\]/gflags\[NEED_FRESH_MANDRAKE\]/g
+
+s/gflags\[0x00E4\]/gflags\[FEDABIBLIO_ANALYSES_RESULTS\]/g
+s/gflags\[0x00E5\]/gflags\[HAVE_MIRROR_OF_TRUTH\]/g
+s/gflags\[0x00E6\]/gflags\[RESTORED_EDRIN\]/g
+
+s/gflags\[0x00E8\]/gflags\[WILL_HELP_POTHOS\]/g
+s/gflags\[0x00E9\]/gflags\[SCROLL_SPEAKS\]/g
+s/gflags\[0x00EA\]/gflags\[COMPANION_KIDNAPPED\]/g
+s/gflags\[0x00EC\]/gflags\[CAN_USE_FILBERCIOS_BARGE\]/g
+
+s/gflags\[0x00F0\]/gflags\[CRYSTAL_BALL_WILL_SHOW_EDRIN\]/g
+s/gflags\[0x00F2\]/gflags\[KNOW_ALE_IS_EDRIN\]/g
+s/gflags\[0x00F3\]/gflags\[EDRIN_DREAMS_OF_SIRANUSH\]/g
+
+s/gflags\[0x00FF\]/gflags\[KNOWS_OF_SOUL_GEMS\]/g
+
+
+s/gflags\[0x0110\]/gflags\[HAS_CLUE_LAB_APPARATUS\]/g
+s/gflags\[0x0114\]/gflags\[ASK_MAGES_ABOUT_SLIPPERS\]/g
+s/gflags\[0x0115\]/gflags\[KNOW_SLIPPERS_ARE_MUNDANE\]/g
+s/gflags\[0x0118\]/gflags\[ASK_ERNESTO_ABOUT_SHIELD\]/g
+
+s/gflags\[0x011B\]/gflags\[HAS_CLUE_FISHNET_STOCKINGS\]/g
+s/gflags\[0x011C\]/gflags\[HAVE_1ST_ENERGY_GLOBE\]/g
+s/gflags\[0x011D\]/gflags\[HAVE_2ND_ENERGY_GLOBE\]/g
+
+# In the unmodified game/g this is set when he dies so he is not respawned.
+s/gflags\[0x0120\]/gflags\[ERNESTO_IS_DEAD\]/g
+s/gflags\[0x0121\]/gflags\[SEEN_RED_LIGHTNING\]/g
+s/gflags\[0x0122\]/gflags\[SEEN_YELLOW_LIGHTNING\]/g
+s/gflags\[0x0123\]/gflags\[SEEN_GREEN_LIGHTNING\]/g
+
+s/gflags\[0x0128\]/gflags\[SAW_EDRIN_TRANSFORM\]/g
+
+s/gflags\[0x012B\]/gflags\[SHAMINO_RESURRECTED_BY_MONKS\]/g
+
+s/gflags\[0x012D\]/gflags\[SEEKING_SOUL_TRAP_SECRET\]/g
+
+s/gflags\[0x0135\]/gflags\[AFTER_FREEDOM_NEWS\]/g
+
+s/gflags\[0x013A\]/gflags\[SHAMINO_TELEPORTED_BY_MONKS\]/g
+
+s/gflags\[0x0145\]/gflags\[KNOWS_ERSTAM_PASSWORD\]/g
+s/gflags\[0x014A\]/gflags\[HAVE_BIRD_CAGE\]/g
+s/gflags\[0x014B\]/gflags\[HAVE_CHILL_SPELL\]/g
+s/gflags\[0x014C\]/gflags\[HAS_CLUE_RING\]/g
+
+s/gflags\[0x014E\]/gflags\[CLEARED_FAWN_TOWER\]/g
+
+
+# Fawn_townplot
+
+s/gflags\[0x0156\]/gflags\[ASKED_JENDON_DAEMON_ARTIFACTS\]/g
+s/gflags\[0x0158\]/gflags\[ASK_DELIN_ABOUT_BATLIN\]/g
+
+s/gflags\[0x016E\]/gflags\[ORACLE_SET_TO_INNOCENT\]/g
+s/gflags\[0x016F\]/gflags\[ORACLE_SET_TO_CORRUPT\]/g
+# Multi-use flags are evil
+# s/gflags\[0x0170\]/gflags\[FAWN_TRIAL_DONE_FIRST_DAY\]/g
+s/gflags\[0x0170\]/gflags\[AUDIENCE_WITH_YELINDA\]/g
+s/gflags\[0x0171\]/gflags\[FAWN_TRIAL_RECESS\]/g
+s/gflags\[0x0172\]/gflags\[FAWN_TRIAL_DONE\]/g
+s/gflags\[0x0173\]/gflags\[DUPRE_ACCUSED\]/g
+s/gflags\[0x0174\]/gflags\[IOLO_ACCUSED\]/g
+s/gflags\[0x0175\]/gflags\[SHAMINO_ACCUSED\]/g
+
+s/gflags\[0x01D1\]/gflags\[PAID_BULL_TOWER_RANSOM\]/g
+
+# Bard Songs
+s/gflags\[0x01D3\]/gflags\[HEARD_BEATRIX_SONG\]/g
+s/gflags\[0x01D4\]/gflags\[HEARD_MOUNTAIN_SONG\]/g
+s/gflags\[0x01D5\]/gflags\[HEARD_GWANI_SONG\]/g
+s/gflags\[0x01D6\]/gflags\[HEARD_FOREST_MASTER_SONG\]/g
+s/gflags\[0x01D7\]/gflags\[HEARD_DREAM_SONG\]/g
+s/gflags\[0x01D8\]/gflags\[HEARD_WHITE_DRAGON_SONG\]/g
+
+s/gflags\[0x0213\]/gflags\[EDRIN_KNOWS_SIRANUSH_IS_REAL\]/g
+
+s/gflags\[0x022B\]/gflags\[TALKED_TO_CHAOS_HIEROPHANT\]/g
+
+s/gflags\[0x025B\]/gflags\[BEATRIX_PROTECTION\]/g
+s/gflags\[0x025C\]/gflags\[BEATRIX_FORGAVE_SHAMINO\]/g
+
+s/gflags\[0x025F\]/gflags\[FREED_GWENNOS_BODY\]/g
+
+s/gflags\[0x0262\]/gflags\[TALKED_TO_GWANI_ABOUT_GWENNO\]/g
+s/gflags\[0x0264\]/gflags\[BAIYANDA_GAVE_BUCKET\]/g
+s/gflags\[0x0265\]/gflags\[KNOW_SKULLCRUSHER_PASSWORD\]/g
+
+s/gflags\[0x026A\]/gflags\[GWENNO_IS_DEAD\]/g
+
+s/gflags\[0x026C\]/gflags\[CORRECT_SALT_TIDES\]/g
+s/gflags\[0x026D\]/gflags\[HAVE_FRESH_MANDRAKE\]/g
+
+s/gflags\[0x0275\]/gflags\[IOLO_GWENNO_REUNITED\]/g
+s/gflags\[0x0279\]/gflags\[TALKED_TO_GREAT_HIEROPHANT\]/g
+
+s/gflags\[0x027A\]/gflags\[STORM_PINECONE\]/g
+s/gflags\[0x027B\]/gflags\[STORM_STOCKINGS\]/g
+s/gflags\[0x027C\]/gflags\[STORM_URN\]/g
+s/gflags\[0x027D\]/gflags\[STORM_LAB_APPARATUS\]/g
+s/gflags\[0x027E\]/gflags\[STORM_PUMICE\]/g
+s/gflags\[0x027F\]/gflags\[STORM_WEDDING_RING\]/g
+s/gflags\[0x0280\]/gflags\[STORM_FUR_CAP\]/g
+s/gflags\[0x0281\]/gflags\[STORM_SLIPPERS\]/g
+s/gflags\[0x0282\]/gflags\[STORM_BREAST_PLATE\]/g
+s/gflags\[0x0283\]/gflags\[STORM_BLUE_EGG\]/g
+s/gflags\[0x0284\]/gflags\[STORM_GOBLIN_BRUSH\]/g
+s/gflags\[0x0285\]/gflags\[STORM_ICEWINE\]/g
+s/gflags\[0x0287\]/gflags\[STORM_FILARI\]/g
+s/gflags\[0x0288\]/gflags\[STORM_BEAR_SKULL\]/g
+s/gflags\[0x0289\]/gflags\[STORM_SEVERED_HAND\]/g
+s/gflags\[0x028A\]/gflags\[STORM_MONITOR_SHIELD\]/g
+s/gflags\[0x028B\]/gflags\[STORM_RUDDY_ROCK\]/g
+s/gflags\[0x028C\]/gflags\[KNOWS_PINECONE_OWNER\]/g
+s/gflags\[0x028D\]/gflags\[KNOWS_MOONSILK_OWNER\]/g
+s/gflags\[0x028E\]/gflags\[KNOWS_URN_ORIGIN\]/g
+s/gflags\[0x028F\]/gflags\[KNOWS_LAB_APPARATUS_OWNER\]/g
+s/gflags\[0x0290\]/gflags\[KNOWS_PUMICE_ORIGIN\]/g
+s/gflags\[0x0291\]/gflags\[KNOWS_RING_OWNER\]/g
+s/gflags\[0x0292\]/gflags\[KNOWS_FURCAP_OWNER\]/g
+s/gflags\[0x0293\]/gflags\[KNOWS_SLIPPERS_OWNER\]/g
+s/gflags\[0x0294\]/gflags\[KNOWS_BREAST_PLATE_OWNER\]/g
+s/gflags\[0x0295\]/gflags\[KNOWS_BLUE_EGG_OWNER\]/g
+s/gflags\[0x0296\]/gflags\[KNOWS_GOBLIN_BRUSH_ORIGIN\]/g
+s/gflags\[0x0297\]/gflags\[KNOWS_ICEWINE_ORIGIN\]/g
+s/gflags\[0x0299\]/gflags\[KNOWS_FILARI_OWNER\]/g
+s/gflags\[0x02A0\]/gflags\[HAS_CLUE_FURCAP\]/g
+
+
+s/gflags\[0x029A\]/gflags\[KNOWS_BEAR_SKULL_ORIGIN\]/g
+s/gflags\[0x029B\]/gflags\[KNOWS_SEVERED_HAND_OWNER\]/g
+s/gflags\[0x029C\]/gflags\[KNOWS_MONITOR_SHIELD_ORIGIN\]/g
+s/gflags\[0x029D\]/gflags\[KNOWS_STONEHEART_ORIGIN\]/g
+
+
+s/gflags\[0x02A2\]/gflags\[SHAMINO_MADE_EQUIPMENT_LIST\]/g
+
+s/gflags\[0x02DB\]/gflags\[DREAM_REALM_COMPLETE\]/g
+s/gflags\[0x02DC\]/gflags\[SERPENT_GWANI_HORN_SPEECH\]/g
+s/gflags\[0x02DD\]/gflags\[SERPENT_GWENNO_BANE_SPEECH\]/g
+
+# Silver_Seed_flags
+s/gflags\[0x02E8\]/gflags\[WEARING_BELT_OF_STRENGTH\]/g
+s/gflags\[0x02E9\]/gflags\[EXPERIENCE_FROM_BELT_OF_STRENGTH\]/g
+s/gflags\[0x02EE\]/gflags\[USED_AMULET_OF_BALANCE\]/g
+
+s/gflags\[0x02F4\]/gflags\[ASKED_SUROK_TOO_MUCH\]/g
+s/gflags\[0x02F5\]/gflags\[RED_ORB_PLACED\]/g
+s/gflags\[0x02F6\]/gflags\[PURPLE_ORB_PLACED\]/g
+s/gflags\[0x02F7\]/gflags\[BLUE_ORB_PLACED\]/g
+s/gflags\[0x02F8\]/gflags\[YELLOW_ORB_PLACED\]/g
+
+s/gflags\[0x02FA\]/gflags\[KNOW_YUREL_LOVES_CHEESE\]/g
+s/gflags\[0x02FB\]/gflags\[HAVE_AMULET_OF_BALANCE\]/g
+s/gflags\[0x02FC\]/gflags\[HAVE_SILVER_SEED\]/g
+s/gflags\[0x02FD\]/gflags\[KARNAX_WITNESSED_SEED_PLANTING\]/g
+s/gflags\[0x02FE\]/gflags\[CASK_WAS_MOVED\]/g
+s/gflags\[0x02FF\]/gflags\[ROPE_ON_WELL\]/g
+s/gflags\[0x0300\]/gflags\[HAVE_KEYRING\]/g
+
+s/gflags\[0x0302\]/gflags\[WEARING_GAUNTLETS_OF_QUICKNESS\]/g
+s/gflags\[0x0303\]/gflags\[HOLDING_ERINONS_AXE\]/g
+s/gflags\[0x0304\]/gflags\[EXPERIENCE_FROM_ERINONS_AXE\]/g
+s/gflags\[0x0305\]/gflags\[WAS_ASKED_LIARS_RIDDLE\]/g
+s/gflags\[0x0306\]/gflags\[WAS_ASKED_EARRINGS_RIDDLE\]/g
+s/gflags\[0x0307\]/gflags\[WAS_ASKED_LONGTOOTH_RIDDLE\]/g
+s/gflags\[0x0308\]/gflags\[WAS_ASKED_CLOTH_RIDDLE\]/g
+s/gflags\[0x0309\]/gflags\[SOLVED_LIARS_RIDDLE\]/g
+s/gflags\[0x030A\]/gflags\[SOLVED_EARRINGS_RIDDLE\]/g
+s/gflags\[0x030B\]/gflags\[SOLVED_LONGTOOTH_RIDDLE\]/g
+s/gflags\[0x030C\]/gflags\[SOLVED_CLOTH_RIDDLE\]/g
+s/gflags\[0x030D\]/gflags\[MET_ISSTANAR\]/g
+s/gflags\[0x030E\]/gflags\[HAVE_PURPLE_ORB\]/g
+s/gflags\[0x030F\]/gflags\[MET_RIEYA\]/g
+s/gflags\[0x0310\]/gflags\[MET_DRUSILLA\]/g
+s/gflags\[0x0313\]/gflags\[MET_SOLARIA\]/g
+s/gflags\[0x0313\]/gflags\[PLANTED_SILVER_SEED\]/g
+s/gflags\[0x0314\]/gflags\[USED_IRON_MAIDEN\]/g
+s/gflags\[0x0315\]/gflags\[EXPERIENCE_FROM_RING_OF_REAGENTS\]/g
+
+###############################################################################
+
+# Shape Functions
+s/Func0096/funcGangPlank/g
+s/Func00A0/funcSerpentGate/g
+s/Func00B2/funcMap/g
+s/Func00D1/funcOphidianItems/g
+s/Func00D2/funcChickenCoop/g
+s/Func00D7/funcTurtleHead/g
+s/Func00E1/funcBigDoorV/g
+s/Func00E4/funcPikeman/g
+# Frigidazzi's sex scene is embedded here:
+s/Func00E6/funcNakedBlonde/g
+s/Func00F3/funcCoffin/g
+s/Func00F6/funcBigDoorH/g
+s/Func00F9/funcOracle/g
+# Barks, etc:
+s/Func00FA/funcMonk/g
+s/Func00FB/funcSails/g
+s/Func0102/funcKeg/g
+s/Func0103/funcRanger/g
+s/Func0105/funcLoom/g
+# 2 Monk scenes are imbedded into the red townsman shape.
+# Xenka's return and the early battle between Thoxa and Karnax.
+s/Func0109/funcMonkScenes/g
+s/Func010E/funcDoorH/g
+# Yelinda's shape
+s/Func0112/funcLadyinGreen/g
+s/Func011C/funcSundial/g
+s/Func011E/funcDrum/g
+# Both play sound on use:
+s/Func0122/funcShuttersH/g
+s/Func0123/funcShuttersV/g
+# Barge / boat code:
+s/Func0124/funcSeat/g
+s/Func0128/funcMagicRing/g
+s/Func012E/funcBear/g
+s/Func012F/funcSlidingDoorV/g
+s/Func0133/funcBurner/g
+s/Func013D/funcAntiShamino/g
+s/Func013E/funcBatlin/g
+s/Func0146/funcFountain/g
+s/Func014A/funcSerpentRune/g
+# If POLYMORPHED UI_set_polymorph(item, SHAPE_MALE_AVATAR_BG);
+s/Func014E/funcWildman/g
+s/Func0150/funcLightSource/g
+s/Func0151/funcGhost/g
+s/Func0152/funcLitLightSource/g
+s/Func0154/funcPotion/g
+# Good candidate for re-writing to fix the gflag for his death.
+# Conversation embedded similar to Silver Seed NPCs:
+s/Func0162/funcGoblinKing/g
+s/Func016B/funcMagicGremlin/g
+# Conversation with Ssithnos:
+s/Func0175/funcMummy/g
+# Seems to be the one from the Moonshade trial,
+# The one that is backward on using the key to lock it.
+s/Func0178/funcDoorV/g
+s/Func0179/funcFoodItems/g
+# Includes some leftovers from BG:
+s/Func017B/funcSign/g
+s/Func017D/funcFawnGuard/g
+# Food with platters, wolf meat, berries:
+s/Func0194/funcFoodItems2/g
+s/Func019C/funcSerpentFountainHead/g
+s/Func01AF/funcForgeBellows/g
+s/Func01B0/funcDoorH2/g
+s/Func01B1/funcDoorV2/g
+# Looks like a Keg but H instead of V.
+s/Func01B2/funcCask/g
+s/Func01B3/funcLitSconce/g
+# WormGem
+s/Func01BD/funcSoulPrism/g
+# The Knight's Banquet is embedded in Marsten's shape:
+s/Func01C3/funcKnightsBanquet/g
+# Moonshade cutscenes are embedded in Flindo's shape.
+# Moonshade Trial and Testamony
+# Getting caught in Frigidazzi's bedchamber
+# Being forced to walk to the teleporter into the Mountains of Freedom
+s/Func01C7/funcMoonshadeCutscenes/g
+s/Func01C8/funcFluxAnalyzer/g
+s/Func01D0/funcPaladin/g
+# Fawn Storm song about Gwenno, and face Utters from Monitor's jail cell:
+s/Func01D1/funcIolo/g
+# Does not do anything for other frames than the King's Savior frames 0 and 1:
+s/Func01D3/funcKingsSavior/g
+s/Func01D6/funcWell/g
+# One big door is north and the other is south.
+s/Func01D7/funcBigDoorV2/g
+# Unlocks doors?
+s/Func01DC/funcWhiteWand/g
+# "Kill the Avatar!"
+s/Func01DE/funcGoblin/g
+# Using this moves Cantra and Shmed without any checking if you already used it?
+s/Func01DF/funcClawGwaniAmulet/g
+# Frames 0 and 1 are okay to use, 2 and 3 are spent:
+s/Func01E1/funcSconce/g
+s/Func01E2/funcGhostWoman/g
+s/Func01E3/funcRugMeditationMat/g
+s/Func01E5/funcKeyRing/g
+s/Func01EF/funcCatMeow/g
+s/Func01F0/funcDogWoof/g
+s/Func01F4/funcCowMoo/g
+s/Func01F8/funcIceRaft/g
+# Runs prep for WallOfLights, includes Lens of Translation:
+s/Func01F9/funcMagicLens/g
+# Magic Harp that puts Ratmen to sleep, doesn't do plain old rats:
+s/Func01FA/funcMagicHarp/g
+
+
+#// Calls the first encounter with Thoxa, again in the Dream Realm, and in
+#// Skullcrusher are done through this function. The SI devs must have been
+#// running out of available functions, or maybe out of time to search for them.
+#extern void gwaniChild shape#(0x363) ();
+s/Func0363/funcThoxaAppears/g
+
+#// Calls the ring (???) usecode, which promptly forwards to a function
+#// that will start the appropriate speech for the plot:
+#extern void startSerpentSpeechViaRing shape#(0x377) ();
+s/Func0377/startSerpentSpeechViaRing/g
+
+#// Silver Seed Shapes
+#extern void funcCapedAutomaton shape#(945) ();
+s/Func03B1/funcCapedAutomaton/g
+#extern void funcHealer shape#(946) ();
+s/Func03B2/funcHealer/g
+#extern void funcOphidianSoldier shape#(947) ();
+s/Func03B3/funcOphidianSoldier/g
+#extern void funcCatMan shape#(957) ();
+s/Func03BD/funcCatMan/g
+#extern void funcMadMan shape#(975) ();
+s/Func03CF/funcMadMan/g
+#extern void funcGreenDragon shape#(978) ();
+s/Func03D2/funcGreenDragon/g
+#extern void funcMageWomanBlueGreen shape#(1015) ();
+s/Func03F7/funcMageWomanBlueGreen/g
+
+
+# NPC Functions 0x400-0x563, with 0x564-0x5FF reserved/unused
+s/Func0526/funcVasculio/g
+
+# Egg and Scripted Functions 0x600-0x7FF?
+s/Func060D/eggFadeFromBlack/g
+# The Silver Seed installation script creates the various NPCs:
+s/Func0612/funcSilverSeedInstall/g
+s/Func0614/showFaceWithSpeech/g
+s/Func0615/feedParty/g
+s/Func0618/plantedSilverSeed/g
+s/Func0619/funcDrusilla/g
+s/Func061A/funcRieya/g
+s/Func061B/funcSolaria/g
+s/Func061D/surroundBatlin/g
+s/Func061E/testOfPuritySex/g
+s/Func061F/clearFlagDancing/g
+s/Func0620/setFlagDancing/g
+s/Func0622/askTimeSleeping/g
+s/Func0623/ariseFromBed/g
+s/Func0624/wrapUpBedroll/g
+# Certificate check included:
+s/Func0625/arrestAvatar/g
+s/Func0626/slaySerpentStatue/g
+s/Func0628/useKegBeer/g
+s/Func0629/useKegWine/g
+# Ophidian books or scrolls, not sure which:
+s/Func062A/specialBooks/g
+# Func062B something with blood shape
+# Func062C links to Cease and desist!
+s/Func062D/useWool/g
+s/Func062E/useThread/g
+s/Func0632/battleThreeWitches/g
+s/Func0633/sickOfStealing/g
+# Func0634 use a barge?
+s/Func0635/bakeBread/g
+s/Func0637/returnCameraToAvatar/g
+s/Func0638/moreBooks/g
+s/Func063A/stealingObjections/g
+s/Func063B/moreBooks2/g
+# Looks to be the failed copy protection bark:
+s/Func063D/funcOink/g
+s/Func063E/bustedUsable/g
+# Functions 0x640-0x688 are all spell, won't list right now
+s/Func068B/keyRejectsRing/g
+# Not fully sure what this does but it is called by killEveryone:
+s/Func068C/moveAvatarAfterBanes/g
+s/Func06A4/damnSteppedOnEgg/g
+s/Func06A5/eggManInFire/g
+s/Func06A6/barksManInFire/g
+s/Func06AD/foundBrownBottle/g
+# Hatched in Furnace for snakes, bones, sleeping gargoyles:
+s/Func06AE/eggDaisyIsle/g
+s/Func06AF/partyOverheating/g
+# Uses the Quality number to kill the specific NPC,
+# Quality usually matches the NPC number.
+s/Func06B1/eggKillEveryone/g
+s/Func06B3/gorlabSwampSleep/g
+# Only calls to usecodeStartSpeechWrapper with number 2:
+s/Func06B4/usecodeStartSpeechWrapper2/g
+s/Func06B6/mintBlinks/g
+# Only going by error text for name:
+s/Func06B7/createBlood/g
+s/Func06B8/createBurnMark/g
+s/Func06B9/eggSkullcrusherAutomatons/g
+s/Func06BC/fawnStorm/g
+# Could be leftover from the "women need protection" in pre-release story:
+s/Func06BF/fawnStalker/g
+# Broken Preaching by Leon, has Kylista mixed in with Scots:
+s/Func06C0/fellowshipSermon/g
+s/Func06C1/hoursCheckOracle/g
+s/Func06C4/afterMintSelina/g
+# Short function and ends a conversation:
+s/Func06CB/makeAvatarDisappear/g
+s/Func06CE/swapInSuitsOfArmor/g
+s/Func06CF/eggFitchsDeath/g
+# Also gflags[0x02DF] = true;
+s/Func06D0/usecodeStartSpeechWrapper13/g
+s/Func06D7/leaveBigRedGateway/g
+# Func06D8 = resurrect Avatar?
+# Johnson's heart attack and various quick scenes in the Dream Realm:
+s/Func06D9/eggsDreamRealm/g
+# Includes the removed Software Pirate Egg and Batlin is nearing the Wall of Lights:
+s/Func06DA/eggKnightsForest/g
+s/Func06DB/haveABadFeeling/g
+s/Func06DC/spinebreakerPedestal/g
+s/Func06E0/foundVoldinControls/g
+s/Func06E1/eggKingofWhiteDragon/g
+s/Func06E3/eggMadIoloFreakShow/g
+s/Func06E4/eggMadIoloSpinning/g
+s/Func06E5/eggMadIoloOpera/g
+s/Func06E6/eggBaneTaunts/g
+s/Func06E7/eggMadIoloShooting/g
+# Also takes the Banes out of Waiting:
+s/Func06EA/eggBaneSomeHero/g
+s/Func06EB/eggMadIoloWaiting/g
+s/Func06EC/eggMadIoloToSleep/g
+# Andrio?
+s/Func06ED/alarmBell/g
+s/Func06EF/balanceSerpentTeleport/g
+# This bottle could be a clue...
+s/Func06F4/sawBrownBottle/g
+# Guessing on flags listed:
+s/Func06F5/eggSacrificeAshes/g
+# Func06F6 might be in Knight's Test
+s/Func06F7/eggShaminoSeesCastle/g
+s/Func06FA/eggFurnaceArena/g
+# Func06FB kills DBeyer
+s/Func06FC/eggBeatrixAttacks/g
+s/Func06FD/eggGuard1/g
+s/Func06FF/eggFurnaceArenaInside/g
+s/Func0700/eggAutoRotoWhoApproaches/g
+# Also does more with items:
+s/Func0701/usecodeStartSpeechWrapper3/g
+# Rotoluncia and her Magic Gremlins:
+s/Func0702/tortureChamberBarks/g
+s/Func0703/eggPolymorphWildman/g
+s/Func0706/lightningMortegro/g
+# Func0707 doors open/close?
+# Petra's temp human form is always white male blond Avatar?
+s/Func070A/bodyTransference/g
+s/Func070B/outOfJail/g
+# Petra also has barks here:
+s/Func0710/acidDamage/g
+s/Func0718/eggSethysDies/g
+s/Func0719/randomBarks/g
+# Lots in this
+s/Func0725/usecodeStartSpeechWrapper4/g
+# This egg is outside Rabindrinath's castle.
+# If you have met Siranush the gate is removed.
+# If not, you bark that it is a strange place.
+s/Func0738/removeRabinsGate/g
+s/Func0739/startKnightsTest/g
+# Selina: "This should stop thee!"
+s/Func073A/goonsLastBattle/g
+s/Func073B/cutsceneWallofLights/g
+s/Func073C/moveThoxaAndTalk/g
+# This was aborted out but had references to the Gwani amulet:
+s/Func0742/smellThatCleanAir/g
+s/Func0743/checkHelmOfMonitor/g
+# If one wanted to change the teleport storm items,
+# this would be the place to do it:
+s/Func0759/stormGameStart/g
+s/Func075A/welcomeThoxa/g
+s/Func075D/headBarksBoydon/g
+s/Func0766/enterSSMaze/g
+# Func0767 looks to remove a lot of shapes
+s/Func0768/burnedLastOrbSS/g
+s/Func077E/createdBoydon/g
+s/Func0798/earthquakeStumble/g
+s/Func0799/eggStopTime/g
+s/Func07AB/timeOfVisions/g
+s/Func07AC/eggLightningClose/g
+# Same as in SIfixes:
+s/Func07AE/eggStartingHints/g
+# Similar to the lightning egg above:
+s/Func07AF/removeMortegro/g
+# Egg for Gustacio's automaton? Func07B1
+# Interesting use of Hawk's Ident number to trigger this:
+s/Func07B3/setSailAllAboard/g
+s/Func07D1/makePartyFaceNPC/g
+s/Func07D2/faceAvatar/g
+# Func07D3 and Func07D4 seem to be using the Amulet of Balance
+s/Func07D5/arrivedSilverSeed/g
+# After the Banes are released this moves all NPCs to be killed,
+# and sets their schedules to WAITING. They die when their egg
+# is hatched, trigged by the Avatar's approach. This also calls
+# Func068C at the end.
+s/Func07D8/killEveryone/g
+s/Func07D9/removeManInFire/g
+# Not sure why there are trial barks at the end?
+s/Func07DC/startMageLordDinner/g
+# Func07DD is only to get_item_shape?
+# Func07DE something with the Monks.
+s/Func07E1/sleepArrowDraygan/g
+# Also includes an unused Pibb bark:
+s/Func07E2/eggFinishedKnightsTest/g
+s/Func07E4/setSailWithHawk/g
+s/Func07E5/setSailStormBarks/g
+s/Func07E6/setSailComplete/g
+# Thoxa vs. Karnax:
+s/Func07EC/monkSpellBattle1/g
+s/Func07ED/monkSpellBattle2/g
+# Also sets Shamino to approach:
+s/Func07EE/monkSpellBattle3/g
+s/Func07F1/sawLightningBlue/g
+s/Func07F2/sawLightningRed/g
+s/Func07F3/sawLightningYellow/g
+s/Func07F4/sawLightningGreen/g
+s/Func07F8/triggerFawnTrial/g
+s/Func07F9/fightListField/g
+# Func07FA temptations
+s/Func07FB/fawnTrialDay1/g
+s/Func07FC/fawnTrialDay2/g
+s/Func07FF/trainListField/g
+s/Func0801/whisperFawn/g
+s/Func0802/joinedTheCause/g
+s/Func0803/buyFromAlyssand/g
+s/Func0804/haggleWithAlyssand/g
+s/Func0805/buyFoodFromArgus/g
+s/Func0806/buyDrinksFromArgus/g
+s/Func0807/haggleWithArgus/g
+s/Func0808/moonshadeAutomatons/g
+# Automatons that are broken and restored have the Zombie flag set.
+# They can join the party:
+s/Func0809/zombieAutomatons/g
+s/Func080A/leftPartyBoydon/g
+s/Func080B/exchangeBucia/g
+s/Func080C/buyFromBucia/g
+s/Func080D/haggleWithBucia/g
+s/Func080E/battleBatlinCantra/g
+# food and water
+s/Func080F/buyFromJailer1/g
+# potions and bandages
+s/Func0810/buyFromJailer2/g
+s/Func0811/buyFromCellia/g
+s/Func0812/haggleWithCellia/g
+s/Func0814/cloneIoloThyLoss/g
+# Thou art truly ethical!
+s/Func0815/passedManInFire/g
+# Matches with next function, levels 1-7.
+s/Func0816/buySpellsColumna/g 
+s/Func0817/haggleWithColumna/g
+s/Func0818/buyFromDelin/g
+s/Func0819/haggleWithDelin/g
+s/Func081A/healingDelphynia/g
+s/Func081B/buyFromDelphynia/g
+s/Func081C/haggleWithDelphynia/g
+s/Func081D/exchangeDevra/g
+s/Func081E/buyFoodFromDevra/g
+s/Func081F/buyDrinksFromDevra/g
+s/Func0820/haggleWithDevra/g
+s/Func0821/draxinarMysticsRiddle/g
+s/Func0822/draxinarEarringsRiddle/g
+s/Func0823/draxinarLongtoothRiddle/g
+s/Func0824/draxinarClothRiddle/g
+s/Func0826/createWormGemDucio/g
+s/Func0827/buyFromDucio/g
+s/Func0828/haggleWithDucio/g
+s/Func0829/leftPartyDupre/g
+s/Func082A/buySpellsElissa/g
+s/Func082B/haggleWithElissa/g
+s/Func082C/trainWithElissa/g
+# False Coin and Vibrate, L1-L9.
+s/Func082D/buySpellsEnsorcio/g
+s/Func082E/haggleWithEnsorcio/g
+s/Func0830/interruptsFilbercio/g
+# Pretty sure this is:
+s/Func0833/openGateFlicken/g
+s/Func0834/freeSpellsGustacio/g
+s/Func0835/leavePartyGwenno/g
+s/Func0836/healingHarnna/g
+s/Func0837/buyFromHarnna/g
+s/Func0838/haggleWithHarrna/g
+s/Func083A/setSailHoldFast/g
+s/Func083B/houndDirection/g
+s/Func083C/leavePartyIolo/g
+s/Func083D/buyFoodFromJendon/g
+s/Func083E/BuyAleFromJendon/g
+s/Func083F/haggleWithJendon/g
+s/Func0840/buyWineFromJulia/g
+s/Func0841/haggleWithJulia/g
+s/Func0842/buyFromKrayg/g
+s/Func0843/sellLeatherToKrayg/g
+s/Func0844/haggleWithKrayg/g
+s/Func0845/buyFoodFromLucilla/g
+s/Func0846/buyDrinksFromLucilla/g
+s/Func0847/haggleWithLucilla/g
+s/Func0848/returnDupresShield/g
+s/Func0849/tauntedLuther/g
+s/Func084A/permissionKnightsTest/g
+s/Func084B/buySpellsMelino/g
+s/Func084C/haggleWithMelino/g
+# Func084D monks
+# Sets the Monks' schedules before you visit them.
+# Not sure why they didn't have schedules in the first place.
+# Other NPCs have them but are just in WAITING.
+s/Func084E/setMonksSchedules/g
+s/Func084F/buySpellsMortegro/g
+s/Func0850/haggleWithMortegro/g
+s/Func0851/buyRoomBlueBoarInn/g
+s/Func0852/buyFoodFromPetra/g
+# Go drink from the town well
+s/Func0853/buyDrinksFromPetra/g
+s/Func0854/haggleWithPetra/g
+
+s/Func0856/barksGoblinAttack/g
+s/Func0857/sellStoneheart/g
+s/Func0858/buyPotionsPothos/g
+s/Func0859/buyReagentsPothos/g
+s/Func085A/buyMagicItemsPothos/g
+s/Func085B/haggleWithPothos/g
+# Func085C and Func085D Rabindrinath
+s/Func085E/buyFoodFromRocco/g
+s/Func085F/buyDrinksFromRocco/g
+s/Func0860/haggleWithRocco/g
+s/Func0861/leavePartySelina/g
+s/Func0862/dumpItemsSelina/g
+s/Func0863/leavePartyShamino/g
+s/Func0864/returnCombYelinda/g
+s/Func0865/exchangeSpektor/g
+s/Func0866/buyArmorStandarr/g
+s/Func0867/buyArmsStandarr/g
+s/Func0868/sellArmorStandarr/g
+s/Func0869/haggleWithStandarr/g
+s/Func086A/leavePartyStefano/g
+s/Func086B/healingSurok/g
+s/Func086C/funcResurrection/g
+# si_externals
+s/Func086D/resurrectCompanions/g
+s/Func086E/sellGemsTopo/g
+s/Func086F/buyFromTopo/g
+s/Func0870/haggleWithTopo/g
+s/Func0871/buySpellsTorrissio/g
+s/Func0872/haggleWithTorrissio/g
+s/Func0873/trainWithTsandar/g
+s/Func0874/leavePartyWilfred/g
+s/Func0875/trainWithWilfred/g
+# Not sure why Zhelkas' conversation is broken up into parts
+s/Func0876/welcomeZhelkas/g
+s/Func0877/myHeroZhelkas/g
+# Unnecessarily complicated:
+s/Func0878/newScheduleZhelkas/g
+s/Func0879/admittedByZhelkas/g
+# s/Func087A/ something near him
+s/Func087B/exchangeZulith/g
+s/Func087C/useAmuletOfBalance/g
+s/Func087F/notTimeToSleep/g
+s/Func0887/upDownWell/g
+s/Func0891/copyProtectionFail1/g
+s/Func0892/copyProtectionFail2/g
+s/Func0893/copyProtectionFail3/g
+s/Func0894/copyProtectionFail4/g
+s/Func0895/copyProtectionFail5/g
+s/Func0896/copyProtectionFail6/g
+s/Func0897/copyProtectionFail7/g
+s/Func0898/copyProtectionFail8/g
+s/Func0899/copyProtectionFail9/g
+s/Func089A/copyProtectionFailA/g
+# Uses variables defined in 1-A.
+s/Func089B/copyProtectionFailConvo/g
+s/Func089D/checkBridgeBlock/g
+s/Func089E/floorRiseGetOn/g
+s/Func089F/floorSinkGetOn/g
+# Func08A2 and Func08A4 baths visit BG?
+s/Func08A5/happyHappyJoyJoy/g
+s/Func08AB/attackKalen/g
+# si_externals
+s/Func08AC/getTrialNPC/g
+s/Func08AD/feedPartyResponses/g
+s/Func08B3/dropItemsKnightsTest/g
+s/Func08B7/newSchedulesKapyGil/g
+s/Func08BA/barksDraygan/g
+s/Func08BB/barksVasculiosCage/g
+s/Func08BC/scratchesCoffin/g
+s/Func08BD/clearFlagsRuneGate/g
+s/Func08BE/skullcrusherRuneGate/g
+s/Func08C0/animateWallOfLights/g
+s/Func08C2/hideNPCsFawnTrial/g
+# si_externals?
+s/Func08C5/partySetTrialFacing/g
+s/Func08CA/eggWatson/g
+s/Func08CD/cutscenesLorthondo/g
+s/Func08CE/wakeSabrina/g
+s/Func08D0/trappedLorthondo/g
+s/Func08D2/leadSabrinaToNightmare/g
+s/Func08D4/wakeNightmare/g
+s/Func08D8/setScheduleTalkTeldrono/g
+s/Func08D9/lockOpenedDoor/g
+s/Func08DA/brassSwitches/g
+s/Func08DB/sirDupreDies/g
+s/Func08E3/sawLightningColors/g
+# Also plays sound 42:
+s/Func08E6/reduceHealthAvatar126/g
+s/Func08E8/fiveFlagsOff/g
+s/Func08E9/fiveFlagsOffTeleport/g
+# Filbercio arrives in Frigidazzi's bedchamber:
+s/Func08EC/darlingImHere/g
+s/Func08ED/banquetSawThings/g
+s/Func08EF/alreadyDeceasedCaladin/g
+s/Func08F0/banquetMakeHaste/g
+# Func08F2 monks
+s/Func08F4/xenkaReturns/g
+s/Func08F5/xenkanMonkDies/g
+s/Func08F8/pointInsideRect/g
+s/Func08FA/monksResurrectAvatar/g
+s/Func08FB/getNearbyBodies/g
+s/Func08FC/areThereBodiesNearby/g
+s/Func08FD/getJoinableNPCNames/g
+s/Func08FE/willMonksResurrect/g
+s/Func08FF/autoRotoOneMoment/g
+# unsure s/Func0900/includes partyUttersNothing/g
+# This makes Filbercio, Frigidazzi, and others go away or change.
+# Also includes Mortegro teleporting to the temple.
+s/Func0901/sentencedToFreedom/g
+# Func0902 doors
+s/Func0903/doorAppearsBlocked/g
+s/Func0904/doorBarksLocked/g
+s/Func0905/doorBarksMagicallyLocked/g
+s/Func0906/getDoorState/g
+s/Func0907/setDoorState/g
+s/Func090C/findDirectionBetween/g
+# Is there room to use this shape? Used for planks and drawbridges.
+s/Func0910/roomToOpen/g
+# No idea why this is seperated as a function:
+s/Func0915/removeThisItem/g
+s/Func0916/triggersStartSpeechWrapper/g
+# Func0917 something Andrio?
+s/Func0918/gangPlankBlocksSailing/g
+# Triggers Batlin to come downstairs in Shamino's Castle:
+s/Func0919/goonsComeQuickly/g
+# Unused in game? Says "I am the Lizard King. I can do anything."
+s/Func091A/theLizardKing/g
+# These appear to be from the Beta, where they are used in the cage
+# Vasculio keeps his blood-prisoners in instead of the skeleton trap.
+# My guess is which of the two is used depends on the Avatar's gender.
+s/Func091B/fakeBrendannInCage/g
+s/Func091C/fakeLucillaInCage/g
+# "Thank thee!@" "Now I feed!!"
+s/Func091D/unlockedVasculiosCage/g
+# ?? s/Func091F/executeUsecodeArray55/g
+s/Func0921/openSkullcrusherGate/g
+s/Func0922/usecodeStartSpeechWrapper/g
+# Checks if the Three Companions are nearby, in the party, and not dead:
+s/Func0923/checkThreeCompanionsInParty/g
+s/Func0926/testOfPuritySexPassed/g
+s/Func0927/testOfPuritySexFailed/g
+s/Func092C/exchangedItemList/g
+s/Func092E/endMonitorTraining/g
+s/Func092F/debugListField/g
+s/Func0931/returnFromListField/g
+s/Func0933/checksBeforeListField/g
+s/Func0935/whatWeaponListField/g
+s/Func0936/trainingEndDialog/g
+# "Obsolete routine TRIAL in conversation"
+s/Func0938/obsoleteRoutineFawnTrial/g
+# Looks to be unused in the release:
+s/Func0939/stackUnderflowFawnTrial/g
+s/Func093A/outcomeFawnTrial/g
+s/Func093B/callWitnessesFawnTrial/g
+s/Func093C/barksToTestifyFawnTrial/g
+s/Func0941/getNPCLevel/g
+s/Func0942/npcNearbyAndVisible/g
+# Exchange of money for items:
+s/Func0943/salesTransaction/g
+s/Func0946/getNamesOfNonAutoParty/g
+# Is something too far away:
+s/Func0947/checkUnderTwentyAway/g
+# Simpler versions of partyUtters, one that barks and the other shows a face.
+s/Func0949/partyUttersSameBark/g
+s/Func094A/partyUttersSameWithFace/g
+# Why does this exist?
+s/Func094B/partyUttersNothing/g
+s/Func094C/partyUttersNothing2/g
+s/Func094D/partyUttersNothing3/g
+s/Func094E/npcSpeakIfNearby/g
+# Func094F(BERYL, ["Die, Draygan!", "I shall kill thee!", "Whoreson!"]);
+s/Func094F/itemSlurp/g
+s/Func0950/lightCandle/g
+s/Func0951/notInMagicStorm/g
+# Func0952 return UI_give_last_created(UI_get_npc_object(var0000));
+s/Func0953/getAvatarName/g
+s/Func0954/getPoliteTitle/g
+s/Func0955/askYesNo/g
+# One-time choice:
+s/Func0956/chooseFromMenu/g
+s/Func0957/chooseFromMenu2/g
+s/Func0958/chooseFromMenuPartyNonAuto/g
+s/Func0959/chooseFromMenuParty/g
+s/Func095A/chooseFromMenuParty2/g
+# Used for the party to converse with each other:
+s/Func095B/getNPCsName/g
+s/Func095C/getPropValue/g
+# Func095D no idea
+s/Func095E/setPropValue/g
+# Leftovers from BG:
+s/Func0965/theFellowshipIs/g
+s/Func0966/askJoinFellowship/g
+s/Func0967/simpleSellsFor/g
+s/Func0968/gargoyleToSellFor/g
+s/Func0969/buyHealing/g
+s/Func096A/buyCuringPoison/g
+s/Func096B/buyResurrection/g
+s/Func096C/whoWishesToTrain/g
+s/Func096D/askWantTraining/g
+s/Func0970/buySpellsFromGargoyle/g
+# Dupre likes beer and Shamino likes wine.
+s/Func0973/drinkParty/g
+s/Func0974/drinkParty2/g
+# Doesn't seem to be called anywhere else:
+s/Func0975/putInHandHitSomeoneElse/g
+s/Func0977/getArraySize/g
+s/Func0978/playSoundEffect108/g
+s/Func0979/directionFromAvatar/g
+# Food, sleep, Fellowship, tag:
+s/Func097A/barksFromBG/g
+s/Func097B/barksFromGargoylesBG/g
+s/Func097D/hasItemCount/g
+s/Func097F/delayedBark/g
+# Not sure here:
+s/Func0980/poisonedPartyMembers/g
+# UI_reduce_health(npc, amount, 0x0000); where the 0x000 is included already.
+# Why did they do this? Just to save one variable?
+s/Func0982/reduceHealthNormalDamage/g
+s/Func0983/npcCanTalk/g
+# Checks all 4 flags:
+s/Func0984/isNPCAsleepCursedDeadParalyzed/g
+# Guessing
+s/Func0985/checkIfNPCandNotAvatar/g
+s/Func0986/clearNPCpotionEffects/g
+s/Func0988/removeFromArray/g
+s/Func098A/checkLightSourceSpent/g
+s/Func098C/copyProtectionQuestions/g
+s/Func098D/getJoinableNPCNumbers/g
+s/Func098E/getNonAutomatonPartyMembers/g
+# "Error: Calling PartySays. Change to PartyUtters."
+s/Func0990/obsoletePartySays/g
+# "Error: Calling PartyBarks. Change to PartyUtters."
+s/Func0991/obsoletePartyBarks/g
+s/Func0992/partyUtters/g
+# Fixed in SIfixes:
+s/Func0993/getLocationID/g
+s/Func0994/getAvatarLocationID/g
+s/Func0995/anotherLocationID/g
+s/Func0996/giveItem/g
+s/Func0997/unusedDelayedBarkAvatar/g
+# Determines if bid is good or bad?
+s/Func0999/haggleFunction/g
+s/Func099A/checkPartyCarryCapacity/g
+s/Func099B/giveItemsToPartyMember/g
+s/Func099C/removeItemFromParty/g
+# Not sure on this one:
+s/Func099D/doWeHaveOne/g
+s/Func099E/getOuterContainer/g
+s/Func09A0/getPathEgg/g
+s/Func09A6/checkForDeadBodies/g
+s/Func09A8/getIndexForElement/g
+s/Func09AA/unfreezeAvatar/g
+s/Func09AC/setNewSchedules/g
+# Specifically goes for the Avatar:
+s/Func09AD/attackAvatar/g
+# When questioning about items goes too long with Harnna, Jendon, Bucia:
+s/Func09AE/askedTooManyQuestions/g
+s/Func09B0/bardSongs/g
+s/Func09B1/bardSongPayment/g
+# Looks to make the Avatar naked:
+s/Func09B2/setAvatarNaked/g
+s/Func09B4/npcAskWhereToWait/g
+s/Func09B5/prepWallOfLights/g
+# SIfixes: mightyGoblinDies
+# Also gives armor to their corpses
+s/Func09B7/retakeFawnTower/g
+# Takes the Banes from Waiting to Major Sit:
+s/Func09B8/beSeatedBanes/g
+s/Func09BE/lightningStormGlobe/g
+# "error, somebody stepped on the worm!-ewb"
+s/Func09BF/testOfPurityCreateWorm/g
+s/Func09C0/testOfPurityWorms/g
+
+
+
+
+# Early Test for Convert delayedBark
+# s/Func097F/delayedBark/g
+
+# Replaces known numbers with assigned names
+# s/in/out/g
+
+# NPC Numbers
+# Leave out FFFF Dupre appears too often
+s/0xFFFE/SHAMINO/g
+s/0xFFFD/IOLO/g
+s/0xFFFC/ANDRIO/g
+s/0xFFFB/AUTO_MELINO/g
+s/0xFFFA/AUTO_GUSTACIO/g
+s/0xFFF9/AUTO_TORRISSIO/g
+s/0xFFF8/AUTO_DUCIO_BAKER/g
+s/0xFFF7/AUTO_DUCIO_BLACKSMITH/g
+s/0xFFF6/AUTO_MAGELORD/g
+s/0xFFF5/AUTO_ROTOLUNCIA/g
+s/0xFFF4/AUTO_FLINDO/g
+s/0xFFF3/BUCIA/g
+s/0xFFF2/COLUMNA/g
+s/0xFFF1/DUCIO/g
+s/0xFFF0/EDRIN/g
+s/0xFFEF/FEDABIBLIO/g
+s/0xFFEE/FILBERCIO/g
+s/0xFFED/FRELI/g
+s/0xFFEC/FRIGIDAZZI/g
+s/0xFFEB/GOBLIN_MESSENGER/g
+s/0xFFEA/GUSTACIO/g
+s/0xFFE9/JULIA/g
+s/0xFFE8/MELINO/g
+s/0xFFE7/AUTO_MESSENGER/g
+s/0xFFE6/MORTEGRO/g
+s/0xFFE5/MOSH/g
+s/0xFFE4/PETRA/g
+s/0xFFE3/POTHOS/g
+s/0xFFE2/ROCCO/g
+s/0xFFE1/ROTOLUNCIA/g
+s/0xFFE0/TOPO/g
+s/0xFFDF/TORRISSIO/g
+s/0xFFDE/BOYDON/g
+s/0xFFDD/ERSTAM/g
+s/0xFFDC/VASEL/g
+s/0xFFDB/ALE/g
+s/0xFFDA/ARGUS/g
+s/0xFFD9/BYRIN/g
+s/0xFFD8/HAWK/g
+s/0xFFD7/DEVRA/g
+s/0xFFD6/FLINDO/g
+s/0xFFD5/KANE/g
+s/0xFFD4/SELINA/g
+s/0xFFD3/WILFRED/g
+s/0xFFD2/ALYSSAND/g
+s/0xFFD1/DELIN/g
+s/0xFFD0/DELPHYNIA/g
+s/0xFFCF/GARTH/g
+s/0xFFCE/JOTH/g
+s/0xFFCD/VOLDIN/g
+s/0xFFCC/JENDON/g
+s/0xFFCB/JORVIN/g
+s/0xFFCA/KYLISTA/g
+s/0xFFC9/YELINDA/g
+s/0xFFC8/LEON/g
+s/0xFFC7/KALEN/g
+s/0xFFC6/OLON/g
+s/0xFFC5/RUGGS/g
+s/0xFFC4/SCOTS/g
+s/0xFFC3/ZULITH/g
+s/0xFFC2/ANDRAL/g
+s/0xFFC1/CALADIN/g
+s/0xFFC0/CANTRA/g
+s/0xFFBF/CELLIA/g
+s/0xFFBE/GOBLIN_SIMON/g
+s/0xFFBD/HARNNA/g
+s/0xFFBC/KRAYG/g
+s/0xFFBB/MARSTEN/g
+s/0xFFBA/LUCILLA/g
+s/0xFFB9/LUTHER/g
+s/0xFFB8/LYDIA/g
+s/0xFFB7/RENFRY/g
+s/0xFFB6/SHAZZANA/g
+s/0xFFB5/SHMED/g
+s/0xFFB4/SIMON/g
+s/0xFFB3/SPEKTOR/g
+s/0xFFB2/STANDARR/g
+s/0xFFB1/TEMPLAR/g
+s/0xFFB0/FLICKEN/g
+s/0xFFAF/ENSORCIO/g
+s/0xFFAE/LORD_OF_DISCIPLINE/g
+s/0xFFAD/ACID_AUTOMATION/g
+s/0xFFAC/GUARD1/g
+s/0xFFAB/AUTO_ARENA_1/g
+s/0xFFAA/GUARD3/g
+s/0xFFA9/AUTO_ARENA_2/g
+s/0xFFA8/GUARD5/g
+s/0xFFA7/GUARD6/g
+s/0xFFA6/GUARD7/g
+s/0xFFA5/GUARD8/g
+s/0xFFA4/AUTO_ARENA_3/g
+s/0xFFA3/AUTO_ARENA_4/g
+s/0xFFA2/MURDER1/g
+s/0xFFA1/MURDER2/g
+s/0xFFA0/MURDER3/g
+s/0xFF9F/MURDER4/g
+s/0xFF9E/MURDER5/g
+s/0xFF9D/MURDER6/g
+s/0xFF9C/ETH_AUTOMATION/g
+s/0xFF9B/GOBL01/g
+s/0xFF9A/GOBL02/g
+s/0xFF99/GOBL03/g
+s/0xFF98/GOBL04/g
+s/0xFF97/GOBL05/g
+s/0xFF96/GOBL06/g
+s/0xFF95/GOBL07/g
+s/0xFF94/GOBL08/g
+s/0xFF93/GOBL09/g
+s/0xFF92/GOBL10/g
+s/0xFF91/GOBL11/g
+s/0xFF90/GOBL12/g
+s/0xFF8F/GOBL13/g
+s/0xFF8E/GOBL14/g
+s/0xFF8D/GOBL15/g
+s/0xFF8C/GOBL16/g
+s/0xFF8B/GOBL17/g
+s/0xFF8A/GOBL18/g
+s/0xFF89/GOBL19/g
+s/0xFF88/GOBL20/g
+s/0xFF87/GOBL21/g
+s/0xFF86/GOBL22/g
+s/0xFF85/GOBL23/g
+s/0xFF84/DREAM_STEFANO/g
+s/0xFF83/AUTO_BUTLER/g
+s/0xFF82/GUARD_11/g
+s/0xFF81/BRUNT/g
+s/0xFF80/DEADEYE/g
+s/0xFF7F/AUTO_PASSWORD/g
+s/0xFF7E/GUARD12/g
+s/0xFF7D/GUARD13/g
+s/0xFF7C/GUARD14/g
+s/0xFF7B/GUARD15/g
+s/0xFF7A/GUARD16/g
+s/0xFF79/ZOMBIE01/g
+s/0xFF78/ZOMBIE02/g
+s/0xFF77/ZOMBIE03/g
+s/0xFF76/ZOMBIE04/g
+s/0xFF75/ZOMBIE05/g
+s/0xFF74/GWANI_01/g
+s/0xFF73/GWANI_02/g
+s/0xFF72/GWANI_03/g
+s/0xFF71/BAIYANDA/g
+s/0xFF70/BWUNDIAI/g
+s/0xFF6F/MWAERNO/g
+s/0xFF6E/MYAURI/g
+s/0xFF6D/NEYOBI/g
+s/0xFF6C/YENANI/g
+s/0xFF6B/GWENNO/g
+s/0xFF6A/BRENDANN/g
+s/0xFF69/MAN_IN_FIRE/g
+s/0xFF68/SETHYS/g
+s/0xFF67/GILWOYAI/g
+s/0xFF66/KAPYUNDI/g
+s/0xFF65/BERYL/g
+s/0xFF64/DRAYGAN/g
+s/0xFF63/HURD/g
+s/0xFF62/IVOR/g
+s/0xFF61/MORGHRIM/g
+s/0xFF60/AUTO_JAIL_01/g
+s/0xFF5F/AUTO_JAIL_02/g
+s/0xFF5E/AUTO_JAIL_03/g
+s/0xFF5D/LORTHONDO/g
+s/0xFF5C/PRISON1/g
+s/0xFF5B/PRISON2/g
+s/0xFF5A/PRISON3/g
+s/0xFF59/PRISON4/g
+s/0xFF58/STEFANO/g
+s/0xFF57/TELDRONO/g
+s/0xFF56/ZHELKAS/g
+s/0xFF55/SEX_01/g
+s/0xFF54/SEX_02/g
+s/0xFF53/SEX_03/g
+s/0xFF52/SEX_04/g
+s/0xFF51/SEX_05/g
+s/0xFF50/THIEF1/g
+s/0xFF4F/THIEF2/g
+s/0xFF4E/CLONE_IOLO/g
+s/0xFF4D/CLONE_SHAMINO/g
+s/0xFF4C/CLONE_DUPRE/g
+s/0xFF4B/RABINDRINATH/g
+s/0xFF4A/SIRANUSH/g
+s/0xFF49/THIEF3/g
+s/0xFF48/MURDER7/g
+s/0xFF47/DED_AUTOMATON/g
+s/0xFF46/GUARD18_EAST/g
+s/0xFF45/GUARD19_EAST/g
+s/0xFF44/GUARD20_NORTH/g
+s/0xFF43/GUARD21_EXIT/g
+s/0xFF42/GUARD17_WEST/g
+s/0xFF41/AUTO_STEFANO/g
+s/0xFF40/AUTO_MORTEGRO/g
+s/0xFF3F/AUTO_SEMINARIUM/g
+s/0xFF3E/AUTO_POTHOS_DOWN/g
+s/0xFF3D/PERRY_STOKES/g
+s/0xFF3C/PIRATE_GUY/g
+s/0xFF3B/1AUTO/g
+s/0xFF3A/MUSIC01/g
+s/0xFF39/MUSICO2/g
+s/0xFF38/MUSICO3/g
+s/0xFF37/DREAM_CANTRA/g
+s/0xFF36/METAL_MAN/g
+s/0xFF35/HENCH2/g
+s/0xFF34/HENCH3/g
+s/0xFF33/HENCH1/g
+s/0xFF32/AUTO_DUCIO_SEW/1
+s/0xFF31/KARNAX/g
+s/0xFF30/SILENT2/g
+s/0xFF2F/MIGGIM/g
+s/0xFF2E/SILENT3/g
+s/0xFF2D/THOXA/g
+s/0xFF2C/BRACCUS/g
+s/0xFF2B/DRAXTA/g
+s/0xFF2A/SILENT1/g
+s/0xFF29/XENKA/g
+s/0xFF28/AUTO_POTHOS_UP/g
+s/0xFF27/SABRINA/g
+s/0xFF26/DREAM_BYRIN/g
+s/0xFF25/DREAM_ENSORCIO/g
+s/0xFF24/DREAM_FILBERCIO/g
+s/0xFF23/MINT_LOAF1/g
+s/0xFF22/DEATH_KNIGHT/g
+s/0xFF21/MINT_LOAF2/g
+s/0xFF20/MINT_LOAF3/g
+s/0xFF1F/MINT_LOAF4/g
+s/0xFF1E/MINT_LOAF5/g
+s/0xFF1D/MINT_LOAF6/g
+s/0xFF1C/2AUTO/g
+s/0xFF1B/3AUTO/g
+s/0xFF1A/4AUTO/g
+s/0xFF19/LARRY/g
+s/0xFF18/STAN/g
+s/0xFF17/UNUSED233/g
+s/0xFF16/UNUSED234/g
+s/0xFF15/UNUSED235/g
+s/0xFF14/UNUSED236/g
+s/0xFF13/UNUSED237/g
+s/0xFF12/UNUSED238/g
+s/0xFF11/UNUSED239/g
+s/0xFF10/UNUSED240/g
+s/0xFF0F/UNUSED241/g
+s/0xFF0E/UNUSED242/g
+s/0xFF0D/UNUSED243/g
+s/0xFF0C/UNUSED244/g
+s/0xFF0B/UNUSED245/g
+s/0xFF0A/UNUSED246/g
+s/0xFF09/UNUSED247/g
+s/0xFF08/UNUSED248/g
+s/0xFF07/UNUSED249/g
+s/0xFF06/UNUSED250/g
+s/0xFF05/UNUSED251/g
+s/0xFF04/UNUSED252/g
+s/0xFF03/UNUSED253/g
+s/0xFF02/UNUSED254/g
+s/0xFF01/UNUSED255/g
+s/0xFF00/SUPER_GOBLIN/g
+s/0xFEFF/BILLY_CAIN/g
+s/0xFEFE/STEVE_POWERS/g
+s/0xFEFD/KEY_GUY/g
+s/0xFEFC/BUSTER/g
+s/0xFEFB/SMUDGE/g
+s/0xFEFA/ANTI_IOLO/g
+s/0xFEF9/ANTI_DUPRE/g
+s/0xFEF8/ANTI_SHAMINO/g
+s/0xFEF7/POMDIRGUN/g
+s/0xFEF6/GARGOYLE_PRISONER/g
+s/0xFEF5/YEARL/g
+s/0xFEF4/BRENDA/g
+s/0xFEF3/HOUND_OF_DOSKAR/g
+s/0xFEF2/HENCH_MAN/g
+s/0xFEF1/HENCHMAN/g
+s/0xFEF0/PALOS/g
+s/0xFEEF/MEELOSE/g
+s/0xFEEE/CHUCK/g
+s/0xFEED/HAZARD/g
+s/0xFEEC/SONAR/g
+s/0xFEEB/SMITHZHORSE/g
+s/0xFEEA/ELSI/g
+s/0xFEE9/EMMIT/g
+s/0xFEE8/LORD_BRITISH/g
+s/0xFEE7/CRUSTY/g
+s/0xFEE6/WATSON/g
+s/0xFEE5/DEATHMARE/g
+s/0xFEE4/PIBB/g
+s/0xFEE3/JOHNSON/g
+s/0xFEE2/UNUSED286/g
+s/0xFEE1/CINDY/g
+s/0xFEE0/UNUSED288/g
+s/0xFEDF/UNUSED289/g
+s/0xFEDE/UNUSED290/g
+s/0xFEDD/UNUSED291/g
+s/0xFEDC/UNUSED292/g
+s/0xFEDB/DBEYER/g
+s/0xFEDA/VASCULIO/g
+s/0xFED9/FITCH/g
+
+# Special NPC Numbers
+s/0xFE9C/AVATAR/g
+s/0xFE9B/PARTY/g
+s/0xFE9A/NONPARTYNEARBY/g
+s/0xFE99/ANY/g
+
+# Shapes should be towards the end. They won't always be correct without
+# setting some sort of mask for which commands check for them, and even
+# then still won't be right, but at least maybe more readable.
+
+
+# Events
+s/event == 0x0000/event == PROXIMITY/g
+s/event != 0x0000/event != PROXIMITY/g
+s/event == 0x0001/event == DOUBLECLICK/g
+s/event != 0x0001/event != DOUBLECLICK/g
+s/event == 0x0002/event == SCRIPTED/g
+s/event != 0x0002/event != SCRIPTED/g
+s/event == 0x0003/event == EGG/g
+s/event != 0x0003/event != EGG/g
+s/event == 0x0004/event == WEAPON/g
+s/event != 0x0004/event != WEAPON/g
+s/event == 0x0005/event == READIED/g
+s/event != 0x0005/event != READIED/g
+s/event == 0x0006/event == UNREADIED/g
+s/event != 0x0006/event != UNREADIED/g
+s/event == 0x0007/event == DEATH/g
+s/event != 0x0007/event != DEATH/g
+s/event == 0x0008/event == POLYMORPHED/g
+s/event != 0x0008/event != POLYMORPHED/g
+s/event == 0x0009/event == STARTED_TALKING/g
+s/event != 0x0009/event != STARTED_TALKING/g
+# Events 10 11 12 are unknown or unused
+s/event == 0x000D/event == PATH_SUCCESS/g
+s/event != 0x000D/event != PATH_SUCCESS/g
+s/event == 0x000E/event == PATH_FAILURE/g
+s/event != 0x000E/event != PATH_FAILURE/g
